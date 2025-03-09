@@ -7,7 +7,7 @@ export const verifyToken = async(req,reply)=>{
             return reply.status(401).send({message:"Unauthorized: Access Token Required"});
         }
         const token = authHeader.split(" ")[1];
-        const decoded = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET);
+        const decoded = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET);
         if(!decoded){
             return reply.status(401).send({message:"Unauthorized "});
         }

@@ -16,7 +16,7 @@ export const generateTokens = (user)=>{
 }
 
 
-export const createCustomer = async(phoneNumber,name)=>{
+export const createCustomer = async(name,phoneNumber)=>{
 
     try{
         
