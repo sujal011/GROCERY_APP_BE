@@ -4,10 +4,10 @@ export const createOrder = async(customerId,items,branch,totalPrice)=>{
 
     try{
         const customerData = await Customer.findById(customerId);
-        const branchData = await Branch.findById(branch);
         if(!customerData){
             throw new Error("Customer not found");
         }
+        const branchData = await Branch.findById(branch);
         if(!branchData){
             throw new Error("Branch not found");
         }
