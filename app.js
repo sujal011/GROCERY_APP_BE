@@ -21,7 +21,7 @@ const start = async () => {
     await registerRoutes(app);
     await buildAdminRouter(app);
 
-    app.listen({port:PORT,host:'0.0.0.0'},(err,addr)=>{
+    app.listen({port:PORT},(err,addr)=>{
         if(err){
             console.log("Failed to connect to DB ❌");
             console.log(err);
