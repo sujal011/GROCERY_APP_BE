@@ -4,6 +4,7 @@ import {getProductsByCategory} from "../controllers/product/product.controller.j
 export const categoryRoutes  = async(fastify,opts)=>{
     fastify.get("/categories",getAllCategories);
 }
+
 export const productRoutes = async(fastify,opts)=>{
     fastify.get("/products/:categoryId",getProductsByCategory);  
 }
