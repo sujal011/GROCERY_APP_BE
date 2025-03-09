@@ -9,7 +9,7 @@ RUN npm install --force
 COPY . .
 
 EXPOSE 5000
-EXPOSE 1000
+EXPOSE 10000
 EXPOSE 80
 
 CMD [ "node","app.js" ]
