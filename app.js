@@ -24,8 +24,8 @@ const start = async () => {
     app.listen({port:PORT,host:'0.0.0.0'},(err,addr)=>{
         if(err){
             console.log("Failed to connect to DB ❌");
-            console.log(err);
-            return;
+            fastify.log.error(err)
+            process.exit(1)
         }
         console.log(`Grocery App Server is running at http://localhost:${PORT}${admin.options.rootPath}`);
     })
