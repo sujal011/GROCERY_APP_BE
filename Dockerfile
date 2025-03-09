@@ -6,7 +6,7 @@ COPY package*.json .
 
 RUN npm install --force
 
-COPY . . 
+COPY . /app/
 
 EXPOSE 5000
 EXPOSE 80

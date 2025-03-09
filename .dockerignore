@@ -4,3 +4,5 @@
 
 # Other unnecessary files or directories
 .git/
+
+.adminjs/

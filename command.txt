@@ -4,4 +4,4 @@ docker build -t grocery-app-be .
 
 container run - 
 
-docker run --rm --name grocery-app-be --publish 5000:5000 --env-file .env grocery-app-be
+docker run --rm --name grocery-app-be-c --publish 5000:5000 --env-file .env grocery-app-be
