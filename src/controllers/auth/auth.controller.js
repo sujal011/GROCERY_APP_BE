@@ -34,11 +34,14 @@ catch(err){
 
 export const loginCustomer = async(req,reply)=>{
     try{
-        const {phone}=req.body;
+        const {name,phone}=req.body;
+        
         let customer = await findCustomerByPhone(phone);
+        
         if(!customer){
-            customer = await createCustomer(phone);
+            customer = await createCustomer(name,phone);
         }
+
         const {accessToken,refreshToken} = generateTokens(customer);
         return reply.send({
             message:"Login successful",
@@ -54,6 +57,7 @@ export const loginCustomer = async(req,reply)=>{
 export const loginDeliveryPartner = async(req,reply)=>{
     try{
         const {email,password}=req.body;
+        
         const deliveryPartner = await findDeliveryPartner(email);
         if(!deliveryPartner){
             return reply.status(400).send({message:"Delivery Partner Not Found"});
