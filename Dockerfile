@@ -8,4 +8,6 @@ RUN npm install --force
 
 COPY . .
 
+EXPOSE 80
+
 CMD [ "node","app.js" ]
