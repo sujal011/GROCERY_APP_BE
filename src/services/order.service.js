@@ -42,10 +42,7 @@ export const createOrder = async(customerId, items, branch, totalPrice) => {
 
         let savedOrder = await newOrder.save();
         savedOrder = await savedOrder.populate([
-            {path:"customer"},
-            {path:"branch"},
             {path:"items.item"},
-            {path:"deliveryPartner"}
         ]);
         return savedOrder;
     } catch (err) {
