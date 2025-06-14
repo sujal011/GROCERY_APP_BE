@@ -2,21 +2,35 @@ import {Order} from "../../models/index.js";
 import { createOrder, findOrderById } from "../../services/order.service.js";
 import { findDeliveryPartnerById } from "../../services/user.service.js";
 
-export const createOrderController = async(req,reply)=>{
-    try{
+export const createOrderController = async(req, reply) => {
+    try {
         const {userId} = req.user;
-        const {items,branch,totalPrice}=req.body;
-        
-        const order = await createOrder(userId,items,branch,totalPrice);
-        if(!order){
-            return reply.status(400).send({message:"Order failed to create"});
+        const {items, branch, totalPrice} = req.body;
+
+        // Validate required fields
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return reply.status(400).send({message: "Items array is required and cannot be empty"});
         }
+
+        if (!branch) {
+            return reply.status(400).send({message: "Branch ID is required"});
+        }
+
+        if (!totalPrice || totalPrice <= 0) {
+            return reply.status(400).send({message: "Valid total price is required"});
+        }
+
+        const order = await createOrder(userId, items, branch, totalPrice);
         return reply.status(201).send({
-            message:"Order created successful",
+            message: "Order created successfully",
             order
         });
-    }catch(err){
-        return reply.status(500).send({message:"An error occured",err});
+    } catch (err) {
+        console.error("Create order error:", err);
+        return reply.status(500).send({
+            message: "An error occurred while creating the order",
+            error: err.message
+        });
     }
 
 }

@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 import Counter from "./counter.js";
 
 const orderSchema = new mongoose.Schema({
-    orderId:{type:String, required:true,unique:true},
+    orderId: { 
+        type: String, 
+        unique: true
+    },
     customer:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Customer",
@@ -57,21 +60,32 @@ const orderSchema = new mongoose.Schema({
   updatedAt:{type:Date, default:Date.now},
 })
 
-async function getnextSequenceValue(sequenceName){
-    const sequenceDocument = await Counter.findOneAndUpdate(
-        {name:sequenceName},
-        {$inc:{sequence_value:1}},
-        {new:true,upsert:true}
-    );
-    return sequenceDocument.sequence_value;
+async function getNextSequenceValue(sequenceName) {
+    try {
+        const sequenceDocument = await Counter.findOneAndUpdate(
+            { name: sequenceName },
+            { $inc: { sequence_value: 1 } },
+            { new: true, upsert: true }
+        );
+        return sequenceDocument.sequence_value;
+    } catch (error) {
+        console.error('Error generating sequence:', error);
+        throw error;
+    }
 }
 
-orderSchema.pre("save",async function(next){
-    if(this.isNew){
-        const seqCount = await getnextSequenceValue("orderId");
-        this.orderId = `ORD-${seqCount.toString().padStart(6,"0")}`;
+orderSchema.pre('save', async function(next) {
+    try {
+        // Only generate orderId for new documents
+        if (this.isNew) {
+            const seqCount = await getNextSequenceValue('orderId');
+            this.orderId = `ORD-${seqCount.toString().padStart(6, '0')}`;
+        }
+        this.updatedAt = new Date();
+        next();
+    } catch (error) {
+        next(error);
     }
-    next();
 })
 
 const Order = mongoose.model("Order",orderSchema);

@@ -1,39 +1,52 @@
 import { Branch, Customer, Order } from "../models/index.js";
 
-export const createOrder = async(customerId,items,branch,totalPrice)=>{
+export const createOrder = async(customerId, items, branch, totalPrice) => {
+    try {
+        // Validate input parameters
+        if (!customerId || !items || !branch || !totalPrice) {
+            throw new Error("Missing required parameters");
+        }
 
-    try{
+        // Validate customer
         const customerData = await Customer.findById(customerId);
-        if(!customerData){
-            throw new Error("Customer not found");
+        if (!customerData || !customerData.liveLocation) {
+            throw new Error("Customer not found or location not available");
         }
+
+        // Validate branch
         const branchData = await Branch.findById(branch);
-        if(!branchData){
-            throw new Error("Branch not found");
+        if (!branchData || !branchData.location) {
+            throw new Error("Branch not found or location not available");
         }
+
         const newOrder = new Order({
-            customer:customerId,
-            items:items.map((item)=>({
-                id:item.id,
-                item:item.item,
-                count:item.count
+            customer: customerId,
+            items: items.map((item) => ({
+                id: item.id,
+                item: item.item,
+                count: item.count
             })),
             branch,
             totalPrice,
-            deliveryLocation:{
-                latitude:customerData.liveLocation.latitude,
-                longitude:customerData.liveLocation.longitude,
-                address:customerData.address || "no addredss available"
+            deliveryLocation: {
+                latitude: customerData.liveLocation.latitude,
+                longitude: customerData.liveLocation.longitude,
+                address: customerData.address || "no delivery address available"
             },
-            pickupLocation:{
-                latitude:branchData.location.latitude,
-                longitude:branchData.location.longitude,
-                address:customerData.address || "no addredss available"
+            pickupLocation: {
+                latitude: branchData.location.latitude,
+                longitude: branchData.location.longitude,
+                address: branchData.address || "no pickup address available"
             },
-        })
-        return await newOrder.save();
-    }catch(err){
-        throw new Error(err);
+        });
+
+        const savedOrder = await newOrder.save();
+        return savedOrder;
+    } catch (err) {
+        if (err.name === 'ValidationError') {
+            throw new Error(`Validation error: ${err.message}`);
+        }
+        throw err;
     }
 }
 
@@ -45,12 +58,12 @@ export const findOrderById = async(id)=>{
     }
 }
 
-// export const findOrdersByQuery = async(query)=>{
-//     try{
-//         return await Order.find(query).pupulate(
-//             "customer branch items.item deliveryPartner",
-//         );
-//     }catch(err){
-//         throw new Error(err);
-//     }
-// }
+export const findOrdersByQuery = async(query)=>{
+    try{
+        return await Order.find(query).populate(
+            "customer branch items.item deliveryPartner",
+        );
+    }catch(err){
+        throw new Error(err);
+    }
+}
