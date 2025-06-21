@@ -123,7 +123,6 @@ export const getOrdersController = async(req,reply)=>{
             query.deliveryPartner=deliveryPartnerId;
             query.branch=branchId;
         }
-        // const orders = await findOrdersbyQuery(query)
         const orders = await Order.find(query).populate(
             "customer branch items.item deliveryPartner"
         )

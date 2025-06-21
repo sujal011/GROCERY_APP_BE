@@ -55,7 +55,9 @@ export const createOrder = async(customerId, items, branch, totalPrice) => {
 
 export const findOrderById = async(id)=>{
     try{
-        return await Order.findById(id);
+        return await Order.find({orderId: id}).populate(
+            "customer branch items.item deliveryPartner",
+        );
     }catch(err){
         throw new Error(err);
     }
