@@ -13,3 +13,16 @@ export const getProductsByCategoryId = async (id)=>{
    throw new Error(err);
 }
 }
+
+export const getProductsByName = async (name)=>{
+    try{
+        const products = await Product.find({
+            name: new RegExp(name, 'i') // Case-insensitive search
+        })
+        .exec()
+
+        return products;
+    }catch(err){
+        throw new Error(err);
+    }
+}
