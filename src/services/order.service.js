@@ -55,10 +55,18 @@ export const createOrder = async(customerId, items, branch, totalPrice) => {
 
 export const findOrderById = async(id)=>{
     try{
-        return await Order.find({orderId: id}).populate(
+        if(!id){
+            throw new Error("Order ID is required");
+        }
+        const foundOrder =  await Order.findOne({orderId: id}).populate(
             "customer branch items.item deliveryPartner",
         );
+        if(!foundOrder || foundOrder.length === 0){
+            throw new Error("Order not found");
+        }
+        return foundOrder
     }catch(err){
+        comsole.error("Error finding order by ID:", err);
         throw new Error(err);
     }
 }

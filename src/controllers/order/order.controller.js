@@ -75,7 +75,10 @@ export const confirmOrderController = async(req,reply)=>{
 export const updateOrderStatusController = async(req,reply)=>{
     try{
         const {orderId} = req.params;
-        const {status,deliveryPartnerLocation} = req.body;
+        const {status,deliveryPersonLocation} = req.body;
+        if(status !== "arriving" && status !== "delivered"){
+            return reply.status(400).send({message:"Status is required"});
+        }
         const {userId} = req.user;
         const deliveryPerson = await findDeliveryPartnerById(userId);
         if(!deliveryPerson){
@@ -89,11 +92,11 @@ export const updateOrderStatusController = async(req,reply)=>{
         if(["cancelled","delivered"].includes(order.status)){
             return reply.status(400).send({message:"Order is already cancelled or delivered"});
         }
-        if(order.deliveryPartner.toString()!==userId){
+        if(order.deliveryPartner._id.toString() !== userId){
             return reply.status(403).send({message:"You are not authorized to update this order"});
         }
         order.status = status;
-        order.deliveryPersonLocation=deliveryPartnerLocation;
+        order.deliveryPersonLocation=deliveryPersonLocation;
         await order.save();
         req.server.io.to(orderId).emit("liveTrackingUpdates",order);
         return reply.send({
